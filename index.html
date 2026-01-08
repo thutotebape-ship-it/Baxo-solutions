@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxo Solutions | Botswana Medical Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root { --navy: #002D40; --lime: #A4D65E; }
+        
+        /* 1. MAIN BACKGROUND SETTINGS */
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), 
+                        url('main-medical-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 2. PRELOADER */
+        #loader {
+            position: fixed; inset: 0; z-index: 999; background: var(--navy);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; transition: opacity 0.8s ease;
+        }
+
+        /* 3. BUBBLE ENGINE LAYER */
+        #air-layer {
+            position: fixed; inset: 0; z-index: 450; pointer-events: none; overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            animation: floatUp 16s infinite linear;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
+            background-size: cover; background-position: center;
+            border: 3px solid var(--lime);
+            pointer-events: auto; transition: transform 0.2s ease;
+        }
+
+        .bubble span {
+            background: rgba(0, 45, 64, 0.85);
+            color: white; padding: 4px 10px; border-radius: 8px;
+            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            pointer-events: none; white-space: nowrap;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.1); opacity: 0; }
+        }
+
+        /* 4. BRAND OVERLAY (MD & MISSION) */
+        #brand-overlay { 
+            display: none; position: fixed; inset: 0; z-index: 400; 
+            background: linear-gradient(rgba(0, 45, 64, 0.97), rgba(0, 45, 64, 0.97)), 
+                        url('corporate-bg.jpg') no-repeat center center;
+            background-size: cover;
+            color: white; overflow-y: auto; padding-top: 100px; padding-bottom: 100px;
+        }
+
+        /* UI Z-INDEX MANAGEMENT */
+        #nav-bar, #quote-cart { z-index: 600; }
+        #close-brand { z-index: 601; }
+
+        .cart-open { transform: translateY(0); }
+        .cart-closed { transform: translateY(calc(100% - 65px)); }
+        
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="w-12 h-12 border-4 border-lime border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="font-black tracking-[0.3em] text-xs uppercase">Baxo Solutions</p>
+    </div>
+
+    <div id="air-layer"></div>
+
+    <nav id="nav-bar" class="fixed top-0 w-full bg-white/95 border-b px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex flex-col">
+            <span class="font-black text-[var(--navy)] text-xl leading-none">BAXO</span>
+            <span class="text-[8px] font-black text-gray-400 tracking-[0.4em]">SOLUTIONS</span>
+        </div>
+        <button onclick="toggleBrand()" class="text-[10px] font-black text-white bg-[var(--navy)] px-6 py-2.5 rounded-full uppercase active:scale-95 transition-all">
+            Company Profile
+        </button>
+    </nav>
+
+    <div id="brand-overlay" class="px-8">
+        <button id="close-brand" onclick="toggleBrand()" class="fixed top-6 right-6 text-[var(--lime)] font-black text-sm p-4 bg-white/10 rounded-full backdrop-blur-md border border-white/20">✕ CLOSE</button>
+        
+        <div class="max-w-xl mx-auto space-y-16">
+            <section class="text-center">
+                <h2 class="text-[var(--lime)] font-black text-[10px] uppercase tracking-[0.5em] mb-8 italic">Managing Director</h2>
+                <img src="md-portrait.jpg" class="w-44 h-44 mx-auto rounded-[3rem] object-cover border-4 border-[var(--lime)] mb-6 shadow-2xl">
+                <h3 class="text-3xl font-black uppercase">Lead Director</h3>
+                <p class="text-gray-300 mt-4 leading-relaxed text-sm italic px-6">
+                    "Bridging the gap between clinical safety and digital visibility in Botswana. Prepared. Protected. Perfected."
+                </p>
+            </section>
+
+            <div class="grid gap-6">
+                <section class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10">
+                    <h3 class="text-[var(--lime)] font-black text-[10px] uppercase mb-4 tracking-widest text-center">Medical Supplies</h3>
+                    <p class="text-sm text-center text-gray-200">National distribution of premium medical consumables, PPE, and hardware.</p>
+                </section>
+                <section class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10">
+                    <h3 class="text-[var(--lime)] font-black text-[10px] uppercase mb-4 tracking-widest text-center">Digital Branding</h3>
+                    <p class="text-sm text-center text-gray-200">Elite identity strategy for healthcare practices and medical SMEs.</p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <main class="relative pt-44 px-8 pb-32">
+        <h1 class="text-6xl font-black text-[var(--navy)] leading-none mb-6">PREPARED.<br>PROTECTED.<br><span class="text-[var(--lime)]">PERFECTED.</span></h1>
+        <p class="text-gray-500 text-[12px] font-bold uppercase tracking-[0.2em] max-w-[280px] leading-relaxed">
+            Pop floating product bubbles below to build your quotation request.
+        </p>
+    </main>
+
+    <div id="quote-cart" class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-20px_60px_rgba(0,0,0,0.3)] rounded-t-[3rem] cart-closed border-t-4 border-[var(--lime)] transition-all duration-500">
+        <button onclick="toggleCart()" class="w-full py-6 font-black text-[var(--navy)] flex items-center justify-center gap-3">
+            <span id="cart-count" class="bg-[var(--navy)] text-[var(--lime)] px-3 py-1 rounded-full text-xs font-bold">0</span>
+            MY QUOTE REQUEST
+            <svg id="cart-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" stroke-width="4"></path></svg>
+        </button>
+        
+        <div class="px-8 pb-12 max-h-[70vh] overflow-y-auto">
+            <div id="cart-items" class="space-y-3 mb-8">
+                <p class="text-center text-gray-400 text-xs py-10 italic">Empty. Pop bubbles to add products.</p>
+            </div>
+
+            <div class="space-y-4">
+                <input type="text" id="client-name" placeholder="Contact Name / Practice" class="w-full p-5 bg-slate-50 rounded-2xl font-bold text-sm outline-none border-2 border-transparent focus:border-[var(--lime)]">
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="sendQuote('whatsapp')" class="bg-[#25D366] text-white p-5 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition">WhatsApp</button>
+                    <button onclick="sendQuote('email')" class="bg-[var(--navy)] text-white p-5 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition">Email Quote</button>
+                </div>
+            </div>
+            <p class="text-[9px] text-center text-gray-400 mt-8 font-black uppercase tracking-[0.2em]">Botswana Nationwide Delivery (T's & C's Apply)</p>
+        </div>
+    </div>
+
+    <script>
+        const air = document.getElementById('air-layer');
+        let cartItems = [];
+        
+        // --- 5. DATA INVENTORY (Match filenames to your product photos) ---
+        const inventory = [
+            { n: "Needles", i: "needles.jpg" }, { n: "Syringes", i: "syringes.jpg" },
+            { n: "Bandages", i: "bandages.jpg" }, { n: "Cotton Wool", i: "cotton.jpg" },
+            { n: "Gauze swabs", i: "gauze.jpg" }, { n: "Nitrile Gloves", i: "nitrile.jpg" },
+            { n: "Latex Gloves", i: "latex.jpg" }, { n: "Mop caps", i: "mopcap.jpg" },
+            { n: "Shoe covers", i: "shoes.jpg" }, { n: "Plastic Aprons", i: "apron.jpg" },
+            { n: "Wheelchairs", i: "wheelchair.jpg" }, { n: "Hospital beds", i: "bed.jpg" },
+            { n: "Dental equipment", i: "dental.jpg" }, { n: "Spillage kits", i: "spill.jpg" },
+            { n: "First aid kits", i: "firstaid.jpg" }, { n: "Surgeon Caps", i: "surgeoncap.jpg" }
+        ];
+
+        function createBubble() {
+            const b = document.createElement('div');
+            const product = inventory[Math.floor(Math.random() * inventory.length)];
+            b.className = 'bubble';
+            const size = 110;
+            b.style.width = size + 'px'; b.style.height = size + 'px';
+            b.style.left = Math.random() * 80 + 10 + 'vw';
+            b.style.backgroundImage = `url('${product.i}')`;
+            b.innerHTML = `<span>${product.n}</span>`;
+            
+            const pop = (e) => {
+                e.preventDefault(); e.stopPropagation();
+                addItem(product.n);
+                b.style.transform = "scale(0)";
+                setTimeout(() => b.remove(), 200);
+            };
+            b.addEventListener('click', pop);
+            b.addEventListener('touchstart', pop);
+            air.appendChild(b);
+            setTimeout(() => { if(b) b.remove(); }, 16000);
+        }
+
+        function addItem(name) {
+            const existing = cartItems.find(i => i.name === name);
+            if (existing) { existing.qty++; } else { cartItems.push({name, qty: 1}); }
+            updateUI();
+            if(cartItems.length === 1 && document.getElementById('quote-cart').classList.contains('cart-closed')) toggleCart();
+        }
+
+        function removeItem(idx) {
+            cartItems.splice(idx, 1);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('cart-count').innerText = cartItems.length;
+            const container = document.getElementById('cart-items');
+            if(cartItems.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 text-xs py-10 italic">Empty. Pop bubbles to add products.</p>`;
+                return;
+            }
+            container.innerHTML = cartItems.map((i, idx) => `
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-gray-100">
+                    <span class="text-[11px] font-black text-[var(--navy)] uppercase">${i.name}</span>
+                    <div class="flex items-center gap-2">
+                        <input type="number" value="${i.qty}" onchange="cartItems[${idx}].qty=this.value" class="w-12 p-2 bg-white text-xs font-black rounded-xl outline-none">
+                        <button onclick="removeItem(${idx})" class="text-red-500 font-black p-2">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleBrand() {
+            const overlay = document.getElementById('brand-overlay');
+            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function toggleCart() {
+            const cart = document.getElementById('quote-cart');
+            cart.classList.toggle('cart-open');
+            cart.classList.toggle('cart-closed');
+            document.getElementById('cart-chevron').style.transform = cart.classList.contains('cart-open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function sendQuote(m) {
+            const n = document.getElementById('client-name').value;
+            if(!n || cartItems.length === 0) return alert("Please enter your name and select items!");
+            let msg = `BAXO SOLUTIONS: QUOTE REQUEST\n--------------------------\nClient: ${n}\n\n` + 
+                      cartItems.map(i => `• ${i.name} (Qty: ${i.qty})`).join('\n') + 
+                      `\n\nDelivery: Countrywide Request.`;
+            if(m === 'whatsapp') window.open(`https://wa.me/26773811270?text=${encodeURIComponent(msg)}`);
+            else window.location.href = `mailto:sales@baxosolutions.com?subject=Quote&body=${encodeURIComponent(msg)}`;
+        }
+
+        // --- PRELOADER REMOVAL ---
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 800);
+                setInterval(createBubble, 2200);
+                for(let i=0; i<3; i++) setTimeout(createBubble, i*800);
+            }, 1500);
+        };
+    </script>
+</body>
+</html>
+
+
+Resources
