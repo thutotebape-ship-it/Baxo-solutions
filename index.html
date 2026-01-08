@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxo Solutions | Automated Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy: #002D40; --lime: #A4D65E; }
+        body { background: #f8fafc; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+        /* THE VIRTUAL CURSOR */
+        #virtual-pointer {
+            position: fixed; width: 30px; height: 30px;
+            background: rgba(164, 214, 94, 0.6);
+            border: 2px solid var(--lime);
+            border-radius: 50%; z-index: 2000;
+            pointer-events: none; display: none;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* BUBBLE STYLING */
+        .demo-bubble {
+            position: absolute; border-radius: 50%; border: 3px solid var(--lime);
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .demo-bubble span {
+            background: rgba(0, 45, 64, 0.8); color: white;
+            padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;
+        }
+
+        /* OVERLAYS */
+        #cart-tray {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; border-top: 4px solid var(--lime);
+            transform: translateY(100%); transition: transform 0.6s ease;
+            z-index: 1000; padding: 30px; border-radius: 40px 40px 0 0;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.1);
+        }
+        .tray-open { transform: translateY(0) !important; }
+
+        /* SUCCESS MESSAGE */
+        #success-msg {
+            display: none; position: fixed; inset: 0; background: var(--navy);
+            z-index: 3000; color: white; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="virtual-pointer"></div>
+
+    <div class="p-10">
+        <h1 class="text-5xl font-black text-[var(--navy)] leading-none">BAXO<br><span class="text-slate-300">SOLUTIONS</span></h1>
+        <button id="start-btn" onclick="runBaxoDemo()" class="mt-8 bg-[var(--navy)] text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-black transition">
+            Start Guided Demo 💡
+        </button>
+    </div>
+
+    <div id="bubble-1" class="demo-bubble w-32 h-32 top-1/4 left-1/4" 
+         style="background-image: url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=300');">
+        <span>GLOVES</span>
+    </div>
+    <div id="bubble-2" class="demo-bubble w-32 h-32 top-1/2 left-2/3" 
+         style="background-image: url('https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?q=80&w=300');">
+        <span>WHEELCHAIR</span>
+    </div>
+
+    <div id="cart-tray">
+        <div class="max-w-md mx-auto">
+            <h3 class="font-black text-center text-navy mb-4 uppercase">Automated Quote List</h3>
+            <div id="demo-list" class="space-y-2 mb-6"></div>
+            <input type="text" id="demo-input" placeholder="Practitioner Name" class="w-full p-4 bg-slate-100 rounded-xl mb-4 border-2 border-transparent">
+            <button id="send-btn" class="w-full py-4 bg-[#25D366] text-white rounded-xl font-black uppercase">Send to Baxo Solutions</button>
+        </div>
+    </div>
+
+    <div id="success-msg">
+        <div class="w-20 h-20 bg-lime-400 rounded-full flex items-center justify-center text-navy text-4xl mb-4">✓</div>
+        <h2 class="text-2xl font-black">SENT TO BAXO</h2>
+        <p class="text-slate-400 mt-2">Request Received Successfully</p>
+        <button onclick="location.reload()" class="mt-8 underline text-xs">RESTART DEMO</button>
+    </div>
+
+    <script>
+        function runBaxoDemo() {
+            const pointer = document.getElementById('virtual-pointer');
+            const startBtn = document.getElementById('start-btn');
+            const tray = document.getElementById('cart-tray');
+            const list = document.getElementById('demo-list');
+            const input = document.getElementById('demo-input');
+            const sendBtn = document.getElementById('send-btn');
+            const success = document.getElementById('success-msg');
+
+            startBtn.style.display = 'none';
+            pointer.style.display = 'block';
+
+            // TIMELINE OF ACTIONS
+            // 1. Target First Bubble
+            setTimeout(() => {
+                const b1 = document.getElementById('bubble-1');
+                pointer.style.top = (b1.offsetTop + 50) + 'px';
+                pointer.style.left = (b1.offsetLeft + 50) + 'px';
+
+                setTimeout(() => {
+                    b1.style.transform = 'scale(0)';
+                    list.innerHTML += `<div class="bg-slate-50 p-3 rounded-lg font-bold text-xs">1x NITRILE GLOVES</div>`;
+                    
+                    // 2. Target Second Bubble
+                    setTimeout(() => {
+                        const b2 = document.getElementById('bubble-2');
+                        pointer.style.top = (b2.offsetTop + 50) + 'px';
+                        pointer.style.left = (b2.offsetLeft + 50) + 'px';
+
+                        setTimeout(() => {
+                            b2.style.transform = 'scale(0)';
+                            list.innerHTML += `<div class="bg-slate-50 p-3 rounded-lg font-bold text-xs">1x WHEELCHAIR</div>`;
+
+                            // 3. Open the Tray
+                            setTimeout(() => {
+                                tray.classList.add('tray-open');
+                                pointer.style.top = (window.innerHeight - 200) + 'px';
+                                pointer.style.left = '50%';
+
+                                // 4. "Type" the name
+                                setTimeout(() => {
+                                    let name = "Baxo Medical Clinic";
+                                    let i = 0;
+                                    input.focus();
+                                    const typing = setInterval(() => {
+                                        input.value += name[i];
+                                        i++;
+                                        if(i >= name.length) {
+                                            clearInterval(typing);
+                                            
+                                            // 5. Click Send
+                                            setTimeout(() => {
+                                                pointer.style.top = (sendBtn.offsetTop + tray.offsetTop + 20) + 'px';
+                                                setTimeout(() => {
+                                                    success.style.display = 'flex';
+                                                }, 800);
+                                            }, 500);
+                                        }
+                                    }, 100);
+                                }, 1000);
+                            }, 800);
+                        }, 1000);
+                    }, 1000);
+                }, 800);
+            }, 500);
+        }
+    </script>
+</body>
+</html>
