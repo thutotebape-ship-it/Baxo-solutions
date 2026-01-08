@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxo Solutions | Botswana Medical Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy: #002D40; --lime: #A4D65E; }
+        
+        /* Full Background Image Setup */
+        body { 
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif; 
+            overflow: hidden; 
+            height: 100vh;
+            background: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)), 
+                        url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        
+        /* Realistic Round Embossed Logo Button */
+        .logo-btn {
+            background: #ffffff;
+            border-radius: 50px;
+            padding: 5px 15px 5px 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.8), 0 6px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .logo-img-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid var(--lime);
+        }
+
+        .logo-text-area { position: relative; z-index: 2; }
+        .logo-text-area h1 {
+            font-weight: 900;
+            color: var(--navy);
+            font-size: 16px;
+            line-height: 1;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+        }
+
+        .faded-arrow {
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            height: 35px;
+            opacity: 0.12;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Floating Bubbles Layer - Set to be ON TOP of the text */
+        .bubble {
+            position: absolute; 
+            border-radius: 50%; 
+            border: 3px solid var(--lime);
+            background-size: cover; 
+            background-position: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: floatUp 14s infinite linear;
+            cursor: pointer; 
+            z-index: 30; /* Higher than content-layer */
+        }
+        .bubble span {
+            background: rgba(0, 45, 64, 0.85); color: white;
+            padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.1); opacity: 0; }
+        }
+
+        /* Text Layer - Set to be BEHIND the bubbles */
+        #air-container { position: fixed; inset: 0; z-index: 30; pointer-events: auto; }
+        .content-layer { position: relative; z-index: 10; pointer-events: none; }
+        .interactive { pointer-events: auto; }
+
+        /* Transparent Profile Overlay */
+        #profile-modal { 
+            display: none; 
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 45, 64, 0.8); 
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full p-4 z-50 flex justify-between items-center">
+        <div class="logo-btn interactive">
+            <div class="logo-img-circle">
+                <img src="logo.png" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/40'">
+            </div>
+            <div class="logo-text-area">
+                <h1>BAXO</h1>
+                <p class="text-[6px] tracking-[0.2em] font-bold text-slate-500 uppercase">Solutions</p>
+                <img src="logo.png" class="faded-arrow">
+            </div>
+        </div>
+        <button onclick="toggleProfile()" class="interactive bg-[var(--navy)] text-white text-[9px] px-5 py-2.5 rounded-full font-bold uppercase tracking-widest shadow-lg">
+            Profile
+        </button>
+    </nav>
+
+    <main class="content-layer h-screen w-full pt-36 px-10">
+        <h2 class="text-5xl font-black text-[var(--navy)] leading-none mb-4">PREPARED.<br>PROTECTED.<br><span class="text-[var(--lime)]">PERFECTED.</span></h2>
+        <p class="text-slate-600 text-[10px] font-bold uppercase tracking-widest max-w-[220px]">Pop floating product bubbles to build your quotation request.</p>
+    </main>
+
+    <div id="air-container"></div>
+
+    <div class="fixed bottom-0 w-full bg-white p-6 rounded-t-[3rem] shadow-[0_-15px_50px_rgba(0,0,0,0.1)] z-40 border-t-2 border-slate-100">
+        <div class="max-w-md mx-auto">
+            <details class="interactive">
+                <summary class="flex justify-between items-center cursor-pointer list-none">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-[var(--lime)] text-[var(--navy)] w-8 h-8 rounded-full flex items-center justify-center font-black text-sm" id="item-count">0</div>
+                        <h3 class="font-black text-[var(--navy)] uppercase text-xs tracking-widest">My Quote Request</h3>
+                    </div>
+                    <span class="text-slate-400">▲</span>
+                </summary>
+                <div id="quote-list" class="flex flex-wrap gap-2 mt-4 mb-6 max-h-32 overflow-y-auto"></div>
+                <button onclick="sendToWhatsApp()" class="w-full bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-lg active:scale-95 transition">
+                    Send to WhatsApp
+                </button>
+            </details>
+        </div>
+    </div>
+
+    <div id="profile-modal">
+        <div class="max-w-xs text-center">
+            <button onclick="toggleProfile()" class="absolute top-8 right-8 text-4xl interactive">&times;</button>
+            <img src="md-portrait.jpg" class="w-32 h-32 rounded-full border-4 border-[var(--lime)] mx-auto mb-6 object-cover shadow-2xl" onerror="this.src='https://via.placeholder.com/150'">
+            <h3 class="text-3xl font-black mb-1">Baxo Solutions</h3>
+            <p class="text-slate-200 text-sm mb-4">Botswana's premier hub for surgical consumables and medical equipment.</p>
+            <p class="text-[var(--lime)] font-bold">Contact: 73811270</p>
+        </div>
+    </div>
+
+    <script>
+        const air = document.getElementById('air-container');
+        const quoteList = document.getElementById('quote-list');
+        const itemCount = document.getElementById('item-count');
+        let selectedItems = [];
+        let lastItem = "";
+
+        const inventory = [
+            { n: "Needles", i: "needles.jpg" }, { n: "Syringes", i: "syringes.jpg" },
+            { n: "Bandages", i: "bandages.jpg" }, { n: "Cotton Wool", i: "cotton.jpg" },
+            { n: "Gauze swabs", i: "gauze.jpg" }, { n: "Nitrile Gloves", i: "nitrile.jpg" },
+            { n: "Latex Gloves", i: "latex.jpg" }, { n: "Mop caps", i: "mopcap.jpg" },
+            { n: "Shoe covers", i: "shoes.jpg" }, { n: "Plastic Aprons", i: "apron.jpg" },
+            { n: "Wheelchairs", i: "wheelchair.jpg" }, { n: "Hospital beds", i: "bed.jpg" },
+            { n: "Dental equipment", i: "dental.jpg" }, { n: "Spillage kits", i: "spill.jpg" },
+            { n: "Surgeon Caps", i: "surgeoncap.jpg" }
+        ];
+
+        function createBubble() {
+            let filtered = inventory.filter(item => item.n !== lastItem);
+            const item = filtered[Math.floor(Math.random() * filtered.length)];
+            lastItem = item.n;
+
+            const b = document.createElement('div');
+            b.className = 'bubble w-28 h-28';
+            b.style.left = (Math.random() * 70 + 5) + 'vw';
+            b.style.backgroundImage = `url('${item.i}')`;
+            b.innerHTML = `<span>${item.n}</span>`;
+            
+            b.onclick = () => {
+                b.style.transform = 'scale(0)';
+                selectedItems.push(item.n);
+                updateUI();
+                setTimeout(() => b.remove(), 200);
+            };
+            air.appendChild(b);
+            setTimeout(() => b.remove(), 14000);
+        }
+
+        function updateUI() {
+            itemCount.innerText = selectedItems.length;
+            quoteList.innerHTML = selectedItems.map(item => `<span class="bg-slate-100 text-[var(--navy)] px-3 py-1.5 rounded-lg text-[9px] font-bold border border-slate-200">${item}</span>`).join('');
+        }
+
+        function toggleProfile() {
+            const modal = document.getElementById('profile-modal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function sendToWhatsApp() {
+            if(selectedItems.length === 0) return;
+            const message = `Baxo Solutions Quote Request:\n- ${selectedItems.join('\n- ')}`;
+            window.open(`https://wa.me/26773811270?text=${encodeURIComponent(message)}`);
+        }
+
+        setInterval(createBubble, 3000);
+        for(let i=0; i<3; i++) setTimeout(createBubble, i * 1200);
+    </script>
+</body>
+</html>
