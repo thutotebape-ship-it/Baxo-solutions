@@ -1,0 +1,60 @@
+<div id="list-view">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black text-[var(--navy)] uppercase">Product Catalog</h2>
+        <button onclick="toggleListView()" class="text-[var(--navy)] font-bold uppercase text-xs">Close ×</button>
+    </div>
+    <div id="category-sections" class="space-y-12"></div>
+</div>
+
+<script>
+    // FULL REINSTATED PRODUCT LIST
+    const inventory = [
+        { n: "Needles", i: "needles.jpg", c: "Medical Consumables" },
+        { n: "Syringes", i: "syringes.jpg", c: "Medical Consumables" },
+        { n: "Bandages", i: "bandages.jpg", c: "Medical Consumables" },
+        { n: "Gauze swabs", i: "gauze.jpg", c: "Medical Consumables" },
+        { n: "Nitrile Gloves", i: "nitrile.jpg", c: "PPE & Safety" },
+        { n: "Latex Gloves", i: "latex.jpg", c: "PPE & Safety" },
+        { n: "Alcohol Swabs", i: "alcohol_swabs.jpg", c: "Medical Consumables" },
+        { n: "IV Cannulas", i: "cannulas.jpg", c: "Medical Consumables" },
+        { n: "Urine Containers", i: "urine_cups.jpg", c: "Medical Consumables" },
+        { n: "Surgical Tape", i: "tape.jpg", c: "Medical Consumables" },
+        { n: "HIV Test Kits", i: "hiv_kits.jpg", c: "Medical Consumables" },
+        { n: "Sharps Bins", i: "sharps_bin.jpg", c: "PPE & Safety" },
+        { n: "Hand Sanitizer", i: "sanitizer.jpg", c: "Industrial Hygiene" },
+        { n: "Tongue Depressors", i: "depressors.jpg", c: "Medical Consumables" },
+        { n: "Crepe Bandages", i: "crepe.jpg", c: "Medical Consumables" },
+        { n: "Spillage kits", i: "spill.jpg", c: "Industrial Hygiene" },
+        { n: "Plastic Aprons", i: "apron.jpg", c: "PPE & Safety" }
+    ];
+
+    // ORIGINAL CATALOG RENDERING LOGIC
+    function renderFullList() {
+        const container = document.getElementById('category-sections');
+        container.innerHTML = '';
+        
+        // Grouping products by Category
+        const categories = [...new Set(inventory.map(item => item.c))];
+        
+        categories.forEach(cat => {
+            const section = document.createElement('div');
+            section.innerHTML = `
+                <h3 class="text-[var(--lime)] font-black text-xs uppercase border-b border-slate-100 pb-2 mb-6 tracking-widest">${cat}</h3>
+                <div class="flex overflow-x-auto gap-10 pb-10 px-2 no-scrollbar">
+                    ${inventory.filter(i => i.c === cat).map(item => `
+                        <div class="list-bubble" style="background-image: url('${item.i}')" onclick="playPop(); addItem('${item.n}')">
+                            <span>${item.n}</span>
+                        </div>
+                    `).join('')}
+                </div>`;
+            container.appendChild(section);
+        });
+    }
+
+    function toggleListView() {
+        const view = document.getElementById('list-view');
+        const isOpening = view.style.display !== 'block';
+        view.style.display = isOpening ? 'block' : 'none';
+        if(isOpening) renderFullList();
+    }
+</script>
