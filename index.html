@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxo Solutions | Botswana Medical Portal</title>
+    
+    <meta property="og:title" content="BAXO SOLUTIONS BOTSWANA">
+    <meta property="og:description" content="Medical & Industrial Procurement. Prepared. Protected. Perfected.">
+    <meta property="og:url" content="https://thutotebape-ship-it.github.io/Baxo-solutions/">
+    <meta property="og:image" content="https://thutotebape-ship-it.github.io/Baxo-solutions/business-card.jpg">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy: #002D40; --lime: #A4D65E; }
+        
+        body { 
+            margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden; min-height: 100vh;
+            background: linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.9)), 
+                        url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .logo-container {
+            background: white; padding: 10px 25px; border-bottom-right-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px;
+        }
+
+        /* TRANSLUCENT BUBBLES */
+        .bubble { 
+            position: absolute; border-radius: 50%; border: 1.5px solid rgba(164, 214, 94, 0.3); 
+            background-size: cover; background-repeat: no-repeat; background-position: center; 
+            display: flex; align-items: center; justify-content: center; 
+            animation: floatUp linear forwards; cursor: pointer; z-index: 30; 
+            transition: all 0.4s ease;
+            background-color: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(4px);
+            opacity: 0.7; 
+            overflow: hidden;
+            will-change: transform;
+        }
+        
+        .bubble:hover { opacity: 1; transform: scale(1.1); background-color: rgba(255, 255, 255, 0.9); }
+        .bubble span { background: rgba(0, 45, 64, 0.8); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; position: absolute; bottom: 12px; }
+        
+        @keyframes floatUp { 0% { transform: translateY(110vh); } 100% { transform: translateY(-30vh); } }
+        
+        #air-container { position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+        .bubble { pointer-events: auto; }
+        .content-layer { position: relative; z-index: 10; pointer-events: none; }
+        .interactive { pointer-events: auto; }
+        
+        #profile-modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0, 45, 64, 0.95); backdrop-filter: blur(10px); align-items: center; justify-content: center; color: white; padding: 20px; }
+        
+        /* SIZE TOGGLE STYLE */
+        .size-select { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; font-size: 9px; font-weight: bold; color: var(--navy); }
+        .qty-input { width: 40px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; font-weight: bold; color: var(--navy); text-align: center; font-size: 10px; }
+    </style>
+</head>
+<body>
+
+    <audio id="pop-sound" src="pop.mp3" preload="auto"></audio>
+
+    <nav class="fixed top-0 w-full z-[150] flex justify-between items-start">
+        <div class="logo-container interactive" onclick="location.reload()">
+            <div class="w-12 h-12 rounded-full border-2 border-[var(--lime)] flex items-center justify-center overflow-hidden bg-white">
+                <img src="logo.png" class="w-10 h-10 object-contain">
+            </div>
+            <div>
+                <h1 class="text-[var(--navy)] text-xl font-black leading-none">BAXO</h1>
+                <p class="text-[8px] tracking-[0.2em] font-bold text-slate-400 uppercase">Solutions</p>
+            </div>
+        </div>
+        <div class="p-4 flex gap-2">
+            <button onclick="toggleProfile()" class="interactive bg-[var(--navy)] text-white text-[10px] px-6 py-3 rounded-full font-bold uppercase tracking-widest shadow-lg">Company Profile</button>
+        </div>
+    </nav>
+
+    <main class="content-layer min-h-screen w-full pt-40 pb-48 px-8">
+        <h2 class="text-5xl font-black text-[var(--navy)] leading-[0.9] mb-4 uppercase">PREPARED.<br>PROTECTED.<br><span class="text-[var(--lime)]">PERFECTED.</span></h2>
+        <p class="text-slate-500 text-[11px] font-bold uppercase tracking-widest mb-12">Sourcing excellence for critical industries.</p>
+    </main>
+
+    <div id="air-container"></div>
+
+    <div id="profile-modal">
+        <div class="max-w-md w-full bg-[var(--navy)] p-8 rounded-3xl relative text-center">
+            <button onclick="toggleProfile()" class="absolute top-4 right-6 text-4xl text-white interactive">&times;</button>
+            <img src="business-card.jpg" class="w-full rounded-xl mb-6 shadow-2xl border border-slate-700" alt="Baxo Business Card">
+            <button onclick="shareBusinessCard()" class="block w-full bg-[var(--lime)] text-[var(--navy)] py-4 rounded-xl font-black text-xs uppercase interactive">Share Business Card</button>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 w-full bg-white p-6 rounded-t-[3rem] shadow-[0_-15px_50px_rgba(0,0,0,0.1)] z-[140] border-t-2 border-slate-100">
+        <div class="max-w-md mx-auto">
+            <details class="interactive">
+                <summary class="flex justify-between items-center cursor-pointer list-none">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-[var(--lime)] text-[var(--navy)] w-10 h-10 rounded-full flex items-center justify-center font-black text-lg" id="item-count">0</div>
+                        <h3 class="font-black text-[var(--navy)] uppercase text-sm tracking-widest">My Quote Request</h3>
+                    </div>
+                    <span>▲</span>
+                </summary>
+                <div class="mt-6 space-y-4">
+                    <input type="text" id="client-name" placeholder="Contact Person / Company *" class="w-full p-4 rounded-xl bg-slate-50 text-xs border border-slate-200 interactive font-bold">
+                    <div id="quote-list" class="max-h-32 overflow-y-auto space-y-2 py-2"></div>
+                    <button onclick="sendToWhatsApp()" class="w-full bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg interactive">Submit Quote Request</button>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        const air = document.getElementById('air-container');
+        const popSound = document.getElementById('pop-sound');
+        const quoteList = document.getElementById('quote-list');
+        const itemCount = document.getElementById('item-count');
+        let selectedItems = [];
+
+        // REPLACE THESE WITH YOUR UPDATED LIST
+        const inventory = [
+            { n: "Needles", i: "needles.jpg", c: "Medical Consumables" },
+            { n: "Nitrile Gloves", i: "nitrile.jpg", c: "PPE & Safety" },
+            { n: "Plastic Aprons", i: "apron.jpg", c: "PPE & Safety" }
+        ];
+
+        function createBubble() {
+            const item = inventory[Math.floor(Math.random() * inventory.length)];
+            const b = document.createElement('div');
+            b.className = 'bubble';
+            b.style.width = '125px'; b.style.height = '125px';
+            b.style.left = (Math.random() * 70 + 10) + 'vw';
+            b.style.animationDuration = '10s';
+            b.style.backgroundImage = `url('${item.i}')`;
+            b.innerHTML = `<span>${item.n}</span>`;
+            
+            b.onclick = () => { 
+                popSound.currentTime = 0; popSound.play().catch(()=>{});
+                addItem(item.n);
+                b.remove(); 
+            };
+            b.addEventListener('animationend', () => b.remove());
+            air.appendChild(b);
+        }
+
+        function addItem(name) {
+            selectedItems.push({ name: name, qty: 1, size: 'M' });
+            updateUI();
+        }
+
+        function updateUI() {
+            itemCount.innerText = selectedItems.length;
+            quoteList.innerHTML = selectedItems.map((item, index) => `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl text-[10px] font-bold border border-slate-100 shadow-sm">
+                    <div class="flex flex-col">
+                        <span>${item.name}</span>
+                        <select onchange="updateSize(${index}, this.value)" class="size-select mt-1">
+                            <option value="S">Small</option>
+                            <option value="M" selected>Medium</option>
+                            <option value="L">Large</option>
+                            <option value="XL">XL</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="number" value="${item.qty}" min="1" onchange="updateQty(${index}, this.value)" class="qty-input">
+                        <span onclick="removeItem(${index})" class="text-red-400 px-2 cursor-pointer">×</span>
+                    </div>
+                </div>`).join('');
+        }
+
+        function updateQty(index, val) { selectedItems[index].qty = Math.max(1, parseInt(val) || 1); }
+        function updateSize(index, val) { selectedItems[index].size = val; }
+        function removeItem(index) { selectedItems.splice(index, 1); updateUI(); }
+
+        function toggleProfile() { 
+            const pm = document.getElementById('profile-modal');
+            pm.style.display = (pm.style.display === 'flex') ? 'none' : 'flex';
+        }
+        
+        function shareBusinessCard() {
+            const currentUrl = "https://thutotebape-ship-it.github.io/Baxo-solutions/";
+            const message = `*BAXO SOLUTIONS BOTSWANA*\nMedical & Industrial Procurement.\n\n${currentUrl}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
+        }
+        
+        function sendToWhatsApp() {
+            const name = document.getElementById('client-name').value;
+            if(!name || !selectedItems.length) return alert("Please add items and your name.");
+            let msg = `*BAXO QUOTE REQUEST*\n👤 *From:* ${name}\n\n*Items:*\n` + 
+                      selectedItems.map(i => `• ${i.name} (Size: ${i.size}, Qty: ${i.qty})`).join('\n') + 
+                      `\n\n🌐 Digital Card: https://thutotebape-ship-it.github.io/Baxo-solutions/`;
+            window.open(`https://wa.me/26773811270?text=${encodeURIComponent(msg)}`);
+        }
+
+        setInterval(createBubble, 2500);
+    </script>
+</body>
+</html>
