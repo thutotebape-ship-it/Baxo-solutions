@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baxo Solutions | Botswana Medical Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root { --navy:#002D40; --lime:#A4D65E; }
+body{margin:0;font-family:sans-serif;overflow-x:hidden;min-height:100vh;
+background:linear-gradient(rgba(248,250,252,.8),rgba(248,250,252,.8)),url('background.jpg') no-repeat center/cover fixed;}
+
+.bubble{position:absolute;border-radius:50%;border:1.5px solid rgba(164,214,94,.4);
+background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;
+animation:floatUp linear forwards;cursor:pointer;z-index:30;
+background-color:rgba(255,255,255,.25);backdrop-filter:blur(5px);}
+.bubble span{background:rgba(0,45,64,.7);color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:800;position:absolute;bottom:12px;width:85%;text-align:center;}
+
+@keyframes floatUp{0%{transform:translateY(110vh);}100%{transform:translateY(-30vh);}}
+
+#air-container{position:fixed;inset:0;z-index:20;pointer-events:none;}
+.interactive{pointer-events:auto;}
+
+#list-view{display:none;position:fixed;inset:0;z-index:100;background:#fff;overflow-y:auto;padding:100px 20px 160px;}
+.list-bubble{width:85px;height:85px;border-radius:50%;border:2px solid var(--lime);
+background-size:cover;background-position:center;position:relative;cursor:pointer;}
+.list-bubble span{position:absolute;bottom:-22px;font-size:8px;font-weight:900;color:var(--navy);width:100px;text-align:center;}
+
+#variant-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);
+align-items:center;justify-content:center;}
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav class="fixed top-0 w-full z-[150] flex justify-between">
+<div class="bg-white p-3 px-6 rounded-br-[40px] shadow-lg flex gap-3 interactive" onclick="location.reload()">
+<img src="logo.png" class="w-10 h-10">
+<div>
+<h1 class="text-[var(--navy)] font-black uppercase">Baxo</h1>
+<p class="text-[7px] tracking-widest text-slate-400 font-bold uppercase">Solutions</p>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button onclick="toggleListView()" class="bg-[var(--lime)] px-6 py-3 rounded-full font-bold text-[10px] uppercase">Catalog</button>
+</div>
+</nav>
+
+<main class="pt-40 px-8">
+<h2 class="text-5xl font-black text-[var(--navy)] uppercase leading-tight">
+Prepared.<br>Protected.<br><span class="text-[var(--lime)]">Perfected.</span>
+</h2>
+</main>
+
+<div id="air-container"></div>
+
+<!-- CATALOG -->
+<div id="list-view">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-xl font-black uppercase text-[var(--navy)]">Product Catalog</h2>
+<button onclick="toggleListView()" class="text-3xl">&times;</button>
+</div>
+<div id="category-sections"></div>
+</div>
+
+<!-- VARIANT MODAL -->
+<div id="variant-modal" class="flex">
+<div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+<h3 id="variant-title" class="font-black uppercase mb-4 text-[var(--navy)]"></h3>
+<div id="variant-options" class="space-y-2"></div>
+<button onclick="closeVariant()" class="mt-4 w-full bg-slate-200 py-3 rounded-xl font-bold uppercase">Cancel</button>
+</div>
+</div>
+
+<!-- QUOTE -->
+<div class="fixed bottom-0 w-full bg-white p-6 rounded-t-[3rem] shadow-xl z-[140]">
+<div class="flex gap-4 items-center">
+<div id="item-count" class="bg-[var(--lime)] w-10 h-10 rounded-full flex items-center justify-center font-black">0</div>
+<span class="font-black uppercase text-[var(--navy)]">Quote Request</span>
+</div>
+<div id="quote-list" class="mt-4 space-y-2 max-h-40 overflow-y-auto"></div>
+<button onclick="sendToWhatsApp()" class="mt-4 w-full bg-[#25D366] text-white py-4 rounded-xl font-black uppercase">
+Submit Quote
+</button>
+</div>
+
+<script>
+const inventory=[
+{n:"Two-Tone Conti Suit",i:"conti.jpg",c:"PPE",v:["Size 32","Size 34","Size 36","Size 38","Size 40","Size 42","Size 44"]},
+{n:"Reflective Vest",i:"placeholder.png",c:"PPE",v:["Yellow","Orange"]},
+{n:"Chelsea Safety Boots",i:"boots.jpg",c:"PPE",v:["Size 6","7","8","9","10","11"]},
+{n:"Nitrile Gloves",i:"nitrile.jpg",c:"Medical",v:["Small","Medium","Large","XL"]},
+{n:"Sharps Bin",i:"sharps.jpg",c:"Medical",v:["5L","10L","20L"]},
+{n:"Hospital Disinfectant",i:"disinfectant.jpg",c:"Hygiene",v:["5L","25L"]},
+{n:"Cleaning Trolley",i:"trolley.jpg",c:"Hygiene",v:null}
+];
+
+let selectedItems=[], currentItem=null;
+
+function createBubble(){
+const item=inventory[Math.floor(Math.random()*inventory.length)];
+const b=document.createElement('div');
+b.className='bubble';
+b.style.width=b.style.height='140px';
+b.style.left=(Math.random()*80+5)+'vw';
+b.style.animationDuration=(Math.random()*6+6)+'s';
+b.style.backgroundImage=`url('${item.i}')`;
+b.innerHTML=`<span>${item.n}</span>`;
+b.onclick=()=>handleItem(item);
+document.getElementById('air-container').appendChild(b);
+b.addEventListener('animationend',()=>b.remove());
+}
+
+function handleItem(item){
+if(item.v){ openVariant(item); }
+else{ addItem(item,null); }
+}
+
+function openVariant(item){
+currentItem=item;
+document.getElementById('variant-title').innerText=item.n;
+document.getElementById('variant-options').innerHTML=
+item.v.map(v=>`<button onclick="addItem(currentItem,'${v}')" class="w-full bg-[var(--lime)] py-3 rounded-xl font-bold uppercase">${v}</button>`).join('');
+document.getElementById('variant-modal').style.display='flex';
+}
+
+function closeVariant(){ document.getElementById('variant-modal').style.display='none'; }
+
+function addItem(item,variant){
+selectedItems.push({name:item.n,variant});
+updateUI(); closeVariant();
+}
+
+function updateUI(){
+document.getElementById('item-count').innerText=selectedItems.length;
+document.getElementById('quote-list').innerHTML=
+selectedItems.map((i,idx)=>`
+<div class="flex justify-between text-xs font-bold bg-slate-100 p-3 rounded-xl">
+<span>${i.name}${i.variant?` (${i.variant})`:''}</span>
+<span onclick="selectedItems.splice(${idx},1);updateUI()" class="text-red-500 cursor-pointer">×</span>
+</div>`).join('');
+}
+
+function toggleListView(){
+const lv=document.getElementById('list-view');
+lv.style.display=lv.style.display==='block'?'none':'block';
+if(lv.style.display==='block') renderCatalog();
+}
+
+function renderCatalog(){
+const ctn=document.getElementById('category-sections');
+ctn.innerHTML='';
+[...new Set(inventory.map(i=>i.c))].forEach(cat=>{
+ctn.innerHTML+=`
+<h3 class="font-black uppercase mt-8 mb-4">${cat}</h3>
+<div class="flex gap-8 overflow-x-auto">
+${inventory.filter(i=>i.c===cat).map(i=>`
+<div class="list-bubble" style="background-image:url('${i.i}')" onclick="handleItem(${JSON.stringify(i).replace(/"/g,'&quot;')})">
+<span>${i.n}</span>
+</div>`).join('')}
+</div>`;
+});
+}
+
+function sendToWhatsApp(){
+if(!selectedItems.length)return alert("Select items first");
+let msg="*BAXO QUOTE REQUEST*\n\n"+selectedItems.map(i=>`• ${i.name}${i.variant?` (${i.variant})`:''}`).join("\n");
+window.open(`https://wa.me/26773811270?text=${encodeURIComponent(msg)}`);
+}
+
+setInterval(createBubble,2500);
+</script>
+
+</body>
+</html>
