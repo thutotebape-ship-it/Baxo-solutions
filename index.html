@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baxo Solutions | Botswana Medical Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root{--navy:#002D40;--lime:#A4D65E;}
+body{margin:0;font-family:sans-serif;overflow-x:hidden;
+background:linear-gradient(rgba(248,250,252,.85),rgba(248,250,252,.85)),
+url('background.jpg') center/cover fixed no-repeat;}
+
+#air-container{position:fixed;inset:0;z-index:40;pointer-events:none}
+.bubble{pointer-events:auto;position:absolute;border-radius:50%;
+border:1.5px solid rgba(164,214,94,.4);
+background-size:cover;background-position:center;
+display:flex;align-items:center;justify-content:center;
+animation:floatUp linear forwards;
+backdrop-filter:blur(6px);
+background-color:rgba(255,255,255,.35);cursor:pointer;}
+.bubble span{position:absolute;bottom:12px;background:rgba(0,45,64,.7);
+color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;
+width:85%;text-align:center;}
+
+@keyframes floatUp{from{transform:translateY(110vh)}to{transform:translateY(-30vh)}}
+
+#list-view{display:none;position:fixed;inset:0;z-index:120;background:#fff;
+overflow-y:auto;padding:100px 20px 160px}
+
+.catalog-grid{display:grid;grid-auto-flow:column;
+grid-template-rows:repeat(2,1fr);gap:28px;
+overflow-x:auto;padding-bottom:24px;}
+
+.list-bubble{width:90px;height:90px;border-radius:50%;
+border:2px solid var(--lime);
+display:flex;align-items:center;justify-content:center;
+position:relative;cursor:pointer;}
+.list-bubble span{position:absolute;bottom:-24px;
+font-size:9px;font-weight:900;width:110px;text-align:center;color:var(--navy);}
+
+#profile-modal{display:none;position:fixed;inset:0;
+background:rgba(0,45,64,.96);z-index:200;
+align-items:center;justify-content:center;color:#fff;padding:20px;}
+</style>
+</head>
+
+<body>
+
+<nav class="fixed top-0 w-full z-[150] flex justify-between items-start">
+<div onclick="location.reload()" class="bg-white p-3 px-6 rounded-br-[40px] shadow-lg flex gap-3 cursor-pointer">
+<img src="logo.png" class="w-10 h-10 object-contain">
+<div>
+<h1 class="text-[var(--navy)] text-lg font-black uppercase">Baxo</h1>
+<p class="text-[7px] tracking-widest text-slate-400 uppercase font-bold">Solutions</p>
+</div>
+</div>
+<div class="p-4 flex gap-2">
+<button onclick="toggleListView()" class="bg-[var(--lime)] px-6 py-3 rounded-full text-[10px] font-bold uppercase">Catalog</button>
+<button onclick="toggleProfile()" class="bg-[var(--navy)] text-white px-6 py-3 rounded-full text-[10px] font-bold uppercase">Profile</button>
+</div>
+</nav>
+
+<main class="pt-40 px-8 pb-64">
+<h2 class="text-5xl font-black text-[var(--navy)] leading-[0.9] uppercase">
+Prepared.<br>Protected.<br><span class="text-[var(--lime)]">Perfected.</span>
+</h2>
+</main>
+
+<div id="air-container"></div>
+
+<div id="profile-modal">
+<div class="max-w-md text-center">
+<button onclick="toggleProfile()" class="text-4xl mb-6">&times;</button>
+<img src="md-portrait.jpg" onerror="this.src='logo.png'"
+class="w-24 h-24 rounded-full border-4 border-[var(--lime)] mx-auto mb-4">
+<h3 class="font-black uppercase mb-6">Managing Director</h3>
+<a href="md-profile.pdf" download
+class="bg-white text-[var(--navy)] px-6 py-3 rounded-xl font-black text-xs block mb-4">
+Download MD Profile
+</a>
+</div>
+</div>
+
+<div id="list-view">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-2xl font-black uppercase text-[var(--navy)]">Product Catalog</h2>
+<button onclick="toggleListView()" class="text-3xl">&times;</button>
+</div>
+<div id="category-sections"></div>
+</div>
+
+<div id="quote-panel" class="fixed bottom-0 w-full bg-white rounded-t-[3.5rem] shadow-xl z-[140]">
+<div class="flex gap-4 items-center p-6 cursor-pointer" onclick="toggleQuote()">
+<div id="item-count" class="bg-[var(--lime)] w-10 h-10 rounded-full flex items-center justify-center font-black">0</div>
+<span class="font-black uppercase text-[var(--navy)]">My Quote Request</span>
+</div>
+<div id="quote-body" class="px-6 pb-6">
+<div id="quote-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+<button onclick="sendToWhatsApp()" class="mt-4 w-full bg-[#25D366] text-white py-4 rounded-xl font-black uppercase">
+Submit Quote
+</button>
+</div>
+</div>
+
+<script>
+let selectedItems=[];
+let quoteOpen=true;
+
+const inventory=[
+{n:"Two-Tone Conti Suit",c:"PPE",sizes:["32","34","36","38","40","42","44"]},
+{n:"Reflective Conti Suit",c:"PPE",sizes:["S","M","L","XL","2XL"]},
+{n:"Chelsea Safety Boots",c:"PPE",sizes:["6","7","8","9","10","11"]},
+{n:"Safety Hard Hat",c:"PPE",sizes:[]},
+{n:"Nitrile Gloves",c:"Medical",sizes:["S","M","L"]}
+];
+
+function addItem(item){
+selectedItems.push({name:item.n,size:item.sizes[0]||"",qty:1,sizes:item.sizes});
+updateUI();
+}
+
+function updateUI(){
+document.getElementById('item-count').innerText=selectedItems.length;
+document.getElementById('quote-list').innerHTML=selectedItems.map((i,idx)=>`
+<div class="bg-slate-50 p-3 rounded-xl text-xs font-bold space-y-2">
+<div>${i.name}</div>
+
+${i.sizes.length?`
+<select onchange="selectedItems[${idx}].size=this.value" class="w-full border rounded p-1 text-xs">
+${i.sizes.map(s=>`<option ${s===i.size?"selected":""}>${s}</option>`).join("")}
+</select>`:""}
+
+<div class="flex justify-between items-center">
+<div class="flex gap-2 items-center">
+<button onclick="if(selectedItems[${idx}].qty>1){selectedItems[${idx}].qty--;updateUI()}" class="px-2 bg-slate-200 rounded">−</button>
+<span>${i.qty}</span>
+<button onclick="selectedItems[${idx}].qty++;updateUI()" class="px-2 bg-slate-200 rounded">+</button>
+</div>
+<button onclick="selectedItems.splice(${idx},1);updateUI()" class="text-red-500">×</button>
+</div>
+</div>`).join("");
+}
+
+function toggleQuote(){
+quoteOpen=!quoteOpen;
+document.getElementById('quote-body').style.display=quoteOpen?'block':'none';
+}
+
+function toggleListView(){
+const v=document.getElementById('list-view');
+v.style.display=v.style.display==='block'?'none':'block';
+if(v.style.display==='block')renderCatalog();
+}
+
+function toggleProfile(){
+const p=document.getElementById('profile-modal');
+p.style.display=p.style.display==='flex'?'none':'flex';
+}
+
+function renderCatalog(){
+const c=document.getElementById('category-sections');
+c.innerHTML="";
+["PPE","Medical"].forEach(cat=>{
+c.innerHTML+=`
+<h3 class="font-black uppercase text-xs mb-4">${cat}</h3>
+<div class="catalog-grid">
+${inventory.filter(i=>i.c===cat).map(i=>`
+<div class="list-bubble" onclick='addItem(${JSON.stringify(i)})'>
+<span>${i.n}</span>
+</div>`).join("")}
+</div>`;
+});
+}
+
+function sendToWhatsApp(){
+let msg="*BAXO QUOTE REQUEST*\n\n"+
+selectedItems.map(i=>`• ${i.name}\n  Size: ${i.size||"N/A"}\n  Qty: ${i.qty}`).join("\n\n");
+window.open(`https://wa.me/26773811270?text=${encodeURIComponent(msg)}`);
+}
+
+function createBubble(){
+const item=inventory[Math.floor(Math.random()*inventory.length)];
+const b=document.createElement("div");
+b.className="bubble";
+const size=Math.random()*40+110;
+b.style.width=size+"px";
+b.style.height=size+"px";
+b.style.left=Math.random()*80+"vw";
+b.style.animationDuration=(Math.random()*7+6)+"s";
+b.innerHTML=`<span>${item.n}</span>`;
+b.onclick=()=>{addItem(item);b.remove();}
+document.getElementById("air-container").appendChild(b);
+b.addEventListener("animationend",()=>b.remove());
+}
+
+setInterval(createBubble,2300);
+</script>
+
+</body>
+</html>
