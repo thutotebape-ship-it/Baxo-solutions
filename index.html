@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baxo Solutions | Botswana Medical Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --navy: #002D40; --lime: #A4D65E; }
+
+    body { 
+      margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden; min-height: 100vh;
+      background: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)), 
+                  url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /* LIST BUBBLE PLACEHOLDER */
+    .list-bubble { 
+      width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--lime); 
+      display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; 
+      background-color: rgba(255,255,255,0.3); 
+      flex-shrink: 0;
+    }
+    .list-bubble span { 
+      position: absolute; bottom: -18px; font-size: 9px; font-weight: 800; color: var(--navy); 
+      text-align: center; width: 120px; 
+    }
+
+    /* NAVIGATION */
+    nav { z-index: 150; }
+    .interactive { cursor: pointer; }
+
+    /* PROFILE MODAL */
+    #profile-modal { 
+      display: none; position: fixed; inset: 0; z-index: 200; 
+      background: rgba(0,45,64,0.96); backdrop-filter: blur(12px); 
+      align-items: center; justify-content: center; color: white; padding: 20px; 
+    }
+
+    /* CATALOG */
+    #list-view { display: none; position: fixed; inset: 0; z-index: 100; background: white; overflow-y: auto; padding: 100px 20px 150px 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="fixed top-0 w-full flex justify-between items-start bg-white shadow-lg p-4">
+    <div class="flex items-center gap-3 interactive" onclick="location.reload()">
+      <img src="logo.png" class="w-10 h-10 object-contain">
+      <div>
+        <h1 class="text-[var(--navy)] text-lg font-black uppercase">Baxo</h1>
+        <p class="text-[7px] tracking-widest text-slate-400 uppercase font-bold">Solutions</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="toggleListView()" class="interactive bg-[var(--lime)] text-[var(--navy)] text-[10px] px-6 py-3 rounded-full font-bold uppercase shadow-lg">Catalog</button>
+      <button onclick="toggleProfile()" class="interactive bg-[var(--navy)] text-white text-[10px] px-6 py-3 rounded-full font-bold uppercase shadow-lg">Profile</button>
+    </div>
+  </nav>
+
+  <!-- MAIN BODY -->
+  <main class="relative z-10 min-h-screen pt-40 pb-64 px-8 pointer-events-none">
+    <h2 class="text-5xl font-black text-[var(--navy)] leading-[0.9] mb-4 uppercase">
+      PREPARED.<br>PROTECTED.<br><span class="text-[var(--lime)]">PERFECTED.</span>
+    </h2>
+    <div class="space-y-4 max-w-sm mt-10 pointer-events-auto">
+      <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+        <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">PPE & Safety Gear</h4>
+        <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">
+          Head-to-toe protection: high-vis vests, boots, helmets, gloves, and professional uniforms.
+        </p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+        <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">Medical Consumables</h4>
+        <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">
+          Gloves, masks, syringes, crutches, first aid kits, diagnostic supplies, and emergency response items.
+        </p>
+      </div>
+      <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+        <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">Industrial & Hygiene</h4>
+        <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">
+          Bulk cleaning chemicals, disinfectants, mopping systems, and sanitation hardware.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- PROFILE MODAL -->
+  <div id="profile-modal">
+    <div class="max-w-md w-full text-center p-6">
+      <button onclick="toggleProfile()" class="text-4xl mb-4 text-white interactive">&times;</button>
+      <img src="md-portrait.jpg" class="w-24 h-24 rounded-full border-4 border-[var(--lime)] mx-auto mb-4 object-cover" onerror="this.src='logo.png'">
+      <h3 class="text-white font-black uppercase mb-4 tracking-widest">Management Profile</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="md-profile.pdf" download class="bg-white text-[var(--navy)] py-3 rounded-xl font-black text-[10px] uppercase interactive text-center">Download Profile</a>
+        <button onclick="shareCard()" class="bg-[var(--lime)] text-[var(--navy)] py-3 rounded-xl font-black text-[10px] uppercase interactive">Share Card</button>
+      </div>
+      <button onclick="toggleProfile()" class="mt-6 bg-[var(--lime)] text-[var(--navy)] px-12 py-4 rounded-xl font-black uppercase tracking-widest interactive">Close</button>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <div id="list-view">
+    <div class="flex justify-between items-center mb-8 px-4">
+      <h2 class="text-2xl font-black text-[var(--navy)] uppercase">Product Catalog</h2>
+      <button onclick="toggleListView()" class="text-3xl">&times;</button>
+    </div>
+    <div id="category-sections" class="space-y-12"></div>
+  </div>
+
+  <!-- QUOTE REQUEST -->
+  <div class="fixed bottom-0 w-full bg-white p-6 rounded-t-[3.5rem] shadow-2xl z-[140] border-t border-slate-100">
+    <div class="max-w-md mx-auto">
+      <details class="interactive">
+        <summary class="flex justify-between items-center cursor-pointer list-none font-black text-[var(--navy)] text-sm uppercase">
+          <div class="flex items-center gap-4">
+            <div class="bg-[var(--lime)] text-[var(--navy)] w-10 h-10 rounded-full flex items-center justify-center text-lg" id="item-count">0</div>
+            <span>My Quote Request</span>
+          </div>
+          <span>▲</span>
+        </summary>
+        <div id="quote-list" class="mt-4 space-y-2 max-h-48 overflow-y-auto py-2"></div>
+        <button onclick="sendToWhatsApp()" class="w-full mt-4 bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Submit Quote Request</button>
+      </details>
+    </div>
+  </div>
+
+  <script>
+    let selectedItems = [];
+
+    const inventory = [
+      // PPE & Safety Clothing
+      { n: "Two-Tone Conti Suit", c: "PPE", u: ["Size 32","Size 34","Size 36","Size 38","Size 40"] },
+      { n: "Reflective Conti Suit", c: "PPE", u: ["Navy","Royal Blue","High-Vis Orange"] },
+      { n: "Flame Retardant Suit", c: "PPE", u: ["D59 SABS Approved"] },
+      { n: "Acid Resistant Suit", c: "PPE", u: ["Specialized Fabric"] },
+      { n: "Chelsea Safety Boots", c: "PPE", u: ["Brown (Size 3-13)","Black (Size 3-13)"] },
+      { n: "Bova Traxx Boots", c: "PPE", u: ["Heavy Duty"] },
+      { n: "Capps Safety Shoes", c: "PPE", u: ["Steel-Toe Low-Cut"] },
+      { n: "Gum Boots", c: "PPE", u: ["Waterproof PVC"] },
+      { n: "Safety Hard Hat", c: "PPE", u: ["White","Yellow","Blue","Red"] },
+      { n: "Reflective Vest", c: "PPE", u: ["Neon Yellow","Neon Orange"] },
+      { n: "Reflective Mesh Bib", c: "PPE", u: ["Traffic Control"] },
+      { n: "Rain Suit", c: "PPE", u: ["Heavy Duty PVC"] },
+      { n: "Freezer Jacket", c: "PPE", u: ["Thermal Insulated"] },
+      { n: "Dust Mask (FFP2)", c: "PPE", u: ["Standard Box"] },
+      { n: "Safety Goggles", c: "PPE", u: ["Anti-Fog Clear"] },
+      { n: "Ear Muffs", c: "PPE", u: ["Noise Reduction"] },
+      { n: "Heavy Duty Leather Gloves", c: "PPE", u: ["Welding/Rough Handling"] },
+      { n: "PVC Dipped Gloves", c: "PPE", u: ["Chemical Resistant"] },
+
+      // Medical Consumables & Equipment
+      { n: "Nitrile Gloves", c: "Medical", u: ["Small","Medium","Large"] },
+      { n: "Latex Gloves", c: "Medical", u: ["Small","Medium","Large"] },
+      { n: "Surgical Masks", c: "Medical", u: ["Box of 50"] },
+      { n: "N95 Respirators", c: "Medical", u: ["Medical Grade"] },
+      { n: "Elbow Crutches", c: "Medical", u: ["Standard Pair"] },
+      { n: "Sharps Bin", c: "Medical", u: ["5L","10L","20L"] },
+      { n: "2ml Syringes", c: "Medical", u: ["Sterile Pack"] },
+      { n: "5ml Syringes", c: "Medical", u: ["Sterile Pack"] },
+      { n: "10ml Syringes", c: "Medical", u: ["Sterile Pack"] },
+      { n: "21G Needles", c: "Medical", u: ["Standard Gauge"] },
+      { n: "23G Needles", c: "Medical", u: ["Fine Gauge"] },
+      { n: "Alcohol Prep Pads", c: "Medical", u: ["Pack of 100"] },
+      { n: "Digital Thermometer", c: "Medical", u: ["Rapid-Read"] },
+      { n: "Pulse Oximeter", c: "Medical", u: ["Fingertip Monitor"] },
+      { n: "First Aid Kit (Reg 3)", c: "Medical", u: ["Standard"] },
+      { n: "First Aid Kit (Reg 7)", c: "Medical", u: ["Large Industrial"] },
+
+      // Industrial & Hygiene
+      { n: "Hospital Disinfectant", c: "Hygiene", u: ["5L","25L"] },
+      { n: "Hand Sanitizer", c: "Hygiene", u: ["5L Alcohol-Based"] },
+      { n: "Industrial Detergent", c: "Hygiene", u: ["5L","25L"] },
+      { n: "Pine Disinfectant", c: "Hygiene", u: ["General Purpose"] },
+      { n: "Cleaning Trolley", c: "Hygiene", u: ["3-Shelf Heavy Duty"] },
+      { n: "Double Mop Bucket", c: "Hygiene", u: ["25L x2"] },
+      { n: "Fan Mop Set", c: "Hygiene", u: ["Industrial Full Set"] },
+      { n: "Soft Broom", c: "Hygiene", u: ["Indoor Floor"] },
+      { n: "Hard Broom", c: "Hygiene", u: ["Outdoor/Industrial"] },
+      { n: "Microfiber Cloths", c: "Hygiene", u: ["Pack of 5"] }
+    ];
+
+    function toggleListView() { 
+      const lv = document.getElementById('list-view');
+      lv.style.display = (lv.style.display === 'block') ? 'none' : 'block'; 
+      if(lv.style.display === 'block') renderFullList(); 
+    }
+
+    function toggleProfile() { 
+      const pm = document.getElementById('profile-modal');
+      pm.style.display = (pm.style.display === 'flex') ? 'none' : 'flex'; 
+    }
+
+    function updateUI() {
+      document.getElementById('item-count').innerText = selectedItems.length;
+      const list = document.getElementById('quote-list');
+      list.innerHTML = '';
+      selectedItems.forEach((item, idx) => {
+        list.innerHTML += `
+        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-[10px] font-bold border border-slate-100 shadow-sm">
+          <span>${item.n}</span>
+          <div class="flex items-center gap-2">
+            <button onclick="changeQty(${idx},-1)">-</button>
+            <span>${item.qty}</span>
+            <button onclick="changeQty(${idx},1)">+</button>
+            <select onchange="updateVariant(${idx},this.value)">
+              ${item.u.map(opt => `<option value="${opt}" ${opt===item.variant?'selected':''}>${opt}</option>`).join('')}
+            </select>
+            <span onclick="removeItem(${idx})" class="text-red-400 px-2 cursor-pointer text-lg">×</span>
+          </div>
+        </div>`;
+      });
+    }
+
+    function changeQty(idx, val) { selectedItems[idx].qty = Math.max(1, selectedItems[idx].qty + val); updateUI(); }
+    function updateVariant(idx, val) { selectedItems[idx].variant = val; }
+    function removeItem(idx) { selectedItems.splice(idx,1); updateUI(); }
+
+    function renderFullList() {
+      const container = document.getElementById('category-sections');
+      container.innerHTML = '';
+      const categories = [...new Set(inventory.map(i=>i.c))];
+      categories.forEach(cat=>{
+        const section = document.createElement('div');
+        section.innerHTML = `<h3 class="text-navy font-black text-xs uppercase border-b pb-2 mb-4 tracking-widest px-4">${cat}</h3>`;
+        const row = document.createElement('div');
+        row.className = "flex gap-6 overflow-x-auto pb-6 px-4 no-scrollbar";
+        inventory.filter(i=>i.c===cat).forEach(item=>{
+          const div = document.createElement('div');
+          div.className="list-bubble flex-shrink-0";
+          div.innerHTML = `<span>${item.n}</span>`;
+          div.onclick = ()=>{ selectedItems.push({...item, qty:1, variant:item.u[0]}); updateUI(); };
+          row.appendChild(div);
+        });
+        section.appendChild(row);
+        container.appendChild(section);
+      });
+    }
+
+    function sendToWhatsApp() {
+      if(!selectedItems.length) return alert("Select items first.");
+      let msg = `*BAXO QUOTE REQUEST*\n\n` + selectedItems.map(i=>`• ${i.qty} x ${i.n} (Option: ${i.variant})`).join('\n');
+      window.open(`https://wa.me/26773811270?text=${encodeURIComponent(msg)}`);
+    }
+
+    function shareCard() {
+      if(navigator.share) navigator.share({ title: 'Baxo Solutions', text:'Baxo Solutions Management Profile', url: window.location.href });
+      else alert("Sharing not supported on this device.");
+    }
+
+  </script>
+</body>
+</html>
