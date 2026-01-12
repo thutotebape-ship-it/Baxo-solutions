@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxo Solutions | Botswana Medical Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy: #002D40; --lime: #A4D65E; }
+
+        body {
+            margin: 0; padding: 0; font-family: sans-serif; overflow-x: hidden; min-height: 100vh;
+            background: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)),
+                        url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* CATALOG STYLING */
+        #list-view { display: none; position: fixed; inset: 0; z-index: 100; background: white; overflow-y: auto; padding: 100px 20px 150px 20px; }
+        .category-row { display: flex; overflow-x: auto; gap: 16px; padding-bottom: 12px; scroll-behavior: smooth; }
+        .list-bubble { min-width: 120px; min-height: 120px; border-radius: 50%; border: 2px solid var(--lime); background-size: cover; background-position: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
+        .list-bubble span { position: absolute; bottom: -20px; font-size: 10px; font-weight: 900; color: var(--navy); text-align: center; width: 100px; }
+        .size-dropdown { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: rgba(255,255,255,0.95); justify-content: center; align-items: center; flex-direction: column; gap: 4px; font-size: 10px; font-weight: 700; }
+        .size-dropdown select { font-size: 10px; padding: 2px; border-radius: 4px; border: 1px solid #ccc; }
+
+        /* PROFILE MODAL */
+        #profile-modal { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0, 45, 64, 0.96); backdrop-filter: blur(12px); align-items: center; justify-content: center; color: white; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full z-[150] flex justify-between items-start">
+        <div class="bg-white p-3 px-6 rounded-br-[40px] shadow-lg flex items-center gap-3 interactive" onclick="location.reload()">
+            <img src="logo.png" class="w-10 h-10 object-contain">
+            <div>
+                <h1 class="text-[var(--navy)] text-lg font-black leading-none uppercase">Baxo</h1>
+                <p class="text-[7px] tracking-widest text-slate-400 uppercase font-bold">Solutions</p>
+            </div>
+        </div>
+        <div class="p-4 flex gap-2">
+            <button onclick="toggleListView()" class="interactive bg-[var(--lime)] text-[var(--navy)] text-[10px] px-6 py-3 rounded-full font-bold uppercase shadow-lg">Catalog</button>
+            <button onclick="toggleProfile()" class="interactive bg-[var(--navy)] text-white text-[10px] px-6 py-3 rounded-full font-bold uppercase shadow-lg">Profile</button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 min-h-screen pt-40 pb-64 px-8 pointer-events-none">
+        <h2 class="text-5xl font-black text-[var(--navy)] leading-[0.9] mb-4 uppercase">PREPARED.<br>PROTECTED.<br><span class="text-[var(--lime)]">PERFECTED.</span></h2>
+        
+        <div class="space-y-4 max-w-sm mt-10">
+            <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+                <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">PPE & Safety Gear</h4>
+                <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">High-visibility vests, protective eyewear, respirators, safety boots, and professional uniforms.</p>
+            </div>
+            <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+                <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">Medical Consumables</h4>
+                <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">Surgical gloves, specialized diagnostic supplies, wound care, first aid kits, and elbow crutches.</p>
+            </div>
+            <div class="bg-white/40 backdrop-blur-md p-5 rounded-3xl border border-white/30 shadow-sm">
+                <h4 class="text-[var(--navy)] text-[10px] font-black uppercase mb-1">Industrial & Hygiene</h4>
+                <p class="text-slate-600 text-[9px] font-bold uppercase leading-tight">Bulk cleaning chemicals, mopping systems, industrial detergents, and disinfectants.</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="profile-modal">
+        <div class="max-w-md w-full text-center p-6">
+            <button onclick="toggleProfile()" class="text-4xl mb-4 text-white interactive">&times;</button>
+            <img src="md-portrait.jpg" class="w-24 h-24 rounded-full border-4 border-[var(--lime)] mx-auto mb-4 object-cover" onerror="this.src='logo.png'">
+            <h3 class="text-white font-black uppercase mb-4 tracking-widest">Management Profile</h3>
+            <button onclick="downloadProfile()" class="bg-[var(--lime)] text-[var(--navy)] px-12 py-4 rounded-xl font-black uppercase tracking-widest interactive mb-4">Download Profile</button>
+            <button onclick="sendProfileWhatsApp()" class="bg-[#25D366] text-white px-12 py-4 rounded-xl font-black uppercase tracking-widest interactive">Share on WhatsApp</button>
+        </div>
+    </div>
+
+    <div id="list-view">
+        <div class="flex justify-between items-center mb-8 px-4">
+            <h2 class="text-2xl font-black text-[var(--navy)] uppercase">Product Catalog</h2>
+            <button onclick="toggleListView()" class="text-3xl">&times;</button>
+        </div>
+        <div id="category-sections" class="space-y-12"></div>
+    </div>
+
+    <div class="fixed bottom-0 w-full bg-white p-6 rounded-t-[3.5rem] shadow-2xl z-[140] border-t border-slate-100">
+        <div class="max-w-md mx-auto">
+            <details class="interactive">
+                <summary class="flex justify-between items-center cursor-pointer list-none font-black text-[var(--navy)] text-sm uppercase">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-[var(--lime)] text-[var(--navy)] w-10 h-10 rounded-full flex items-center justify-center text-lg" id="item-count">0</div>
+                        <span>My Quote Request</span>
+                    </div>
+                    <span>▲</span>
+                </summary>
+                <div id="quote-list" class="mt-4 space-y-2 max-h-48 overflow-y-auto py-2"></div>
+                <button onclick="sendToWhatsApp()" class="w-full mt-4 bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Submit Quote Request</button>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        const inventory = [
+            // PPE & Safety
+            { n:"Two-Tone Conti Suit", i:"conti.jpg", c:"PPE & Safety", u:["32","34","36","38","40","42","44"], q:1, desc:"Poly-cotton jacket/trousers" },
+            { n:"Reflective Conti Suit", i:"reflective.jpg", c:"PPE & Safety", u:["Navy","Royal Blue"], q:1, desc:"High-vis suit with reflective tape" },
+            { n:"Flame Retardant Suit", i:"flame.jpg", c:"PPE & Safety", u:["D59 SABS"], q:1, desc:"Heat resistant suit" },
+            { n:"Acid Resistant Suit", i:"acid.jpg", c:"PPE & Safety", u:["S","M","L","XL"], q:1, desc:"Chemical resistant" },
+            { n:"Chelsea Safety Boots", i:"boots.jpg", c:"PPE & Safety", u:["Brown","Black"], q:1, desc:"Pull-on leather boots" },
+            { n:"Bova Traxx Boots", i:"bova.jpg", c:"PPE & Safety", u:["42","43","44"], q:1, desc:"High-cut heavy-duty" },
+            { n:"Capps Safety Shoes", i:"capps.jpg", c:"PPE & Safety", u:["39","40","41","42"], q:1, desc:"Low-cut steel-toe" },
+            { n:"Gum Boots", i:"gum.jpg", c:"PPE & Safety", u:["7","8","9","10"], q:1, desc:"PVC waterproof boots" },
+            { n:"Safety Hard Hat", i:"hardhat.jpg", c:"PPE & Safety", u:["White","Yellow","Blue","Red"], q:1, desc:"HDPE shell" },
+            { n:"Reflective Vest", i:"vest.jpg", c:"PPE & Safety", u:["S","M","L"], q:1, desc:"High-vis waistcoat" },
+            { n:"Reflective Mesh Bib", i:"bib.jpg", c:"PPE & Safety", u:["S","M","L"], q:1, desc:"Breathable bib" },
+            { n:"Rain Suit", i:"rain.jpg", c:"PPE & Safety", u:["S","M","L","XL"], q:1, desc:"Heavy-duty PVC" },
+            { n:"Freezer Jacket", i:"freezer.jpg", c:"PPE & Safety", u:["S","M","L"], q:1, desc:"Thermal insulated" },
+            { n:"Dust Mask (FFP2)", i:"mask.jpg", c:"PPE & Safety", u:["One Size"], q:1, desc:"Respiratory protection" },
+            { n:"Safety Goggles", i:"goggles.jpg", c:"PPE & Safety", u:["One Size"], q:1, desc:"Anti-fog eyewear" },
+            { n:"Ear Muffs", i:"earmuffs.jpg", c:"PPE & Safety", u:["One Size"], q:1, desc:"Noise reduction" },
+            { n:"Heavy Duty Leather Gloves", i:"leathergloves.jpg", c:"PPE & Safety", u:["S","M","L"], q:1, desc:"Cow-hide gloves" },
+            { n:"PVC Dipped Gloves", i:"pvcgloves.jpg", c:"PPE & Safety", u:["S","M","L"], q:1, desc:"Chemical resistant" },
+            // Medical Consumables
+            { n:"Nitrile Gloves", i:"gloves.jpg", c:"Medical Consumables", u:["Box 100"], q:1, desc:"Examination gloves" },
+            { n:"Latex Gloves", i:"latex.jpg", c:"Medical Consumables", u:["Box 100"], q:1, desc:"Natural rubber" },
+            { n:"Surgical Masks", i:"surgicalmask.jpg", c:"Medical Consumables", u:["Box 50"], q:1, desc:"3-Ply earloop" },
+            { n:"N95 Respirators", i:"n95.jpg", c:"Medical Consumables", u:["One Size"], q:1, desc:"Medical grade" },
+            { n:"Elbow Crutches", i:"crutches.jpg", c:"Medical Consumables", u:["Pair Adjustable"], q:1, desc:"Mobility aid" },
+            { n:"Sharps Bin", i:"sharps.jpg", c:"Medical Consumables", u:["5L","10L","20L"], q:1, desc:"Puncture-resistant" },
+            { n:"2ml Syringes", i:"2ml.jpg", c:"Medical Consumables", u:["Sterile"], q:1, desc:"Luer-lock" },
+            { n:"5ml Syringes", i:"5ml.jpg", c:"Medical Consumables", u:["Sterile"], q:1, desc:"Luer-lock" },
+            { n:"10ml Syringes", i:"10ml.jpg", c:"Medical Consumables", u:["Sterile"], q:1, desc:"Luer-lock" },
+            { n:"21G Needles", i:"21g.jpg", c:"Medical Consumables", u:["Green"], q:1, desc:"Hypodermic" },
+            { n:"23G Needles", i:"23g.jpg", c:"Medical Consumables", u:["Blue"], q:1, desc:"Hypodermic" },
+            { n:"Alcohol Prep Pads", i:"alcohol.jpg", c:"Medical Consumables", u:["70% Isopropyl"], q:1, desc:"Site sterilization" },
+            { n:"Digital Thermometer", i:"thermometer.jpg", c:"Medical Consumables", u:["One Size"], q:1, desc:"Rapid-read" },
+            { n:"Pulse Oximeter", i:"pulse.jpg", c:"Medical Consumables", u:["One Size"], q:1, desc:"Fingertip monitor" },
+            { n:"First Aid Kit (Reg 3)", i:"kit3.jpg", c:"Medical Consumables", u:["Standard"], q:1, desc:"Factory/office" },
+            { n:"First Aid Kit (Reg 7)", i:"kit7.jpg", c:"Medical Consumables", u:["Comprehensive"], q:1, desc:"Large-scale industrial" },
+            // Industrial & Hygiene
+            { n:"Hospital Disinfectant", i:"disinfectant.jpg", c:"Industrial & Hygiene", u:["5L","25L"], q:1, desc:"Surface sterilizer" },
+            { n:"Hand Sanitizer", i:"sanitizer.jpg", c:"Industrial & Hygiene", u:["5L"], q:1, desc:"Alcohol gel" },
+            { n:"Industrial Detergent", i:"detergent.jpg", c:"Industrial & Hygiene", u:["5L","25L"], q:1, desc:"Floor cleaner" },
+            { n:"Pine Disinfectant", i:"pine.jpg", c:"Industrial & Hygiene", u:["One Size"], q:1, desc:"Scented cleaner" },
+            { n:"Cleaning Trolley", i:"trolley.jpg", c:"Industrial & Hygiene", u:["3-Shelf"], q:1, desc:"Janitorial cart" },
+            { n:"Double Mop Bucket", i:"bucket.jpg", c:"Industrial & Hygiene", u:["25L x2"], q:1, desc:"Color-coded wringer" },
+            { n:"Fan Mop Set", i:"mop.jpg", c:"Industrial & Hygiene", u:["One Set"], q:1, desc:"Heavy-duty mop" },
+            { n:"Soft Broom", i:"softbroom.jpg", c:"Industrial & Hygiene", u:["One Size"], q:1, desc:"Indoor floor broom" },
+            { n:"Hard Broom", i:"hardbroom.jpg", c:"Industrial & Hygiene", u:["One Size"], q:1, desc:"Outdoor broom" },
+            { n:"Microfiber Cloths", i:"cloths.jpg", c:"Industrial & Hygiene", u:["Pack"], q:1, desc:"Zero-smear cleaning" },
+        ];
+
+        let selectedItems = [];
+
+        function toggleListView() {
+            const lv = document.getElementById('list-view');
+            lv.style.display = (lv.style.display==='block')?'none':'block';
+            if(lv.style.display==='block') renderFullList();
+        }
+
+        function toggleProfile() {
+            const pm = document.getElementById('profile-modal');
+            pm.style.display = (pm.style.display==='flex')?'none':'flex';
+        }
+
+        function renderFullList() {
+            const container = document.getElementById('category-sections');
+            container.innerHTML = '';
+            const categories = [...new Set(inventory.map(item => item.c))];
+            categories.forEach(cat=>{
+                const section = document.createElement('div');
+                section.innerHTML = `<h3 class="text-navy font-black text-xs uppercase border-b pb-2 mb-4 tracking-widest px-4">${cat}</h3>
+                <div class="category-row">
+                ${inventory.filter(i=>i.c===cat).map(item=>{
+                    return `<div class="list-bubble" style="background-image:url('${item.i}')" onclick="addToQuote(${inventory.indexOf(item)})">
+                        <span>${item.n}</span>
+                    </div>`;
+                }).join('')}
+                </div>`;
+                container.appendChild(section);
+            });
+        }
+
+        function addToQuote(idx){
+            const item = {...inventory[idx]};
+            const existing = selectedItems.find(i=>i.n===item.n);
+            if(existing) return; // prevent duplicates
+            selectedItems.push(item);
+            updateQuote();
+        }
+
+        function updateQuote(){
+            const container = document.getElementById('quote-list');
+            container.innerHTML =
