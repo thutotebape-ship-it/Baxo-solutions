@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Baxo Solutions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f8}
+h2{margin:16px}
+.category-desc{margin:0 16px 8px;color:#555;font-size:14px}
+
+.catalog-row{
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  padding:16px
+}
+
+.catalog-item{
+  min-width:160px;
+  background:#fff;
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+  flex-shrink:0;
+  text-align:center;
+  cursor:pointer
+}
+
+.catalog-item img{width:100%;height:110px;object-fit:contain}
+.catalog-item h4{font-size:13px;margin:8px 0 4px}
+.catalog-item p{font-size:11px;color:#666}
+
+#quotePanel{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:2px solid #ccc;
+  max-height:60vh;
+  overflow-y:auto
+}
+
+#quoteHeader{
+  background:#222;
+  color:#fff;
+  padding:12px;
+  cursor:pointer
+}
+
+.quote-item{
+  border-bottom:1px solid #eee;
+  padding:10px
+}
+
+.quote-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:6px
+}
+</style>
+</head>
+
+<body>
+
+<h2>PPE & Safety Clothing</h2>
+<p class="category-desc">Industrial protective clothing and safety wear.</p>
+<div class="catalog-row" id="ppe"></div>
+
+<h2>Medical Consumables</h2>
+<p class="category-desc">Clinical and emergency medical supplies.</p>
+<div class="catalog-row" id="medical"></div>
+
+<h2>Hygiene & Cleaning</h2>
+<p class="category-desc">Industrial hygiene and sanitation products.</p>
+<div class="catalog-row" id="hygiene"></div>
+
+<div id="quotePanel">
+  <div id="quoteHeader">Quote Request</div>
+  <div id="quoteBody"></div>
+</div>
+
+<script>
+const PRODUCTS = [
+  {cat:"ppe",name:"Two-Tone Conti Suit",img:"conti.jpg",desc:"Poly-cotton",sizes:["S","M","L","XL","2XL"]},
+  {cat:"ppe",name:"Reflective Conti Suit",img:"reflective.jpg",desc:"High vis",sizes:["S","M","L","XL","2XL"]},
+  {cat:"ppe",name:"Flame Retardant Suit",img:"flame.jpg",desc:"Heat resistant",sizes:["M","L","XL","2XL"]},
+  {cat:"ppe",name:"Acid Resistant Suit",img:"acid.jpg",desc:"Chemical",sizes:["M","L","XL","2XL"]},
+  {cat:"ppe",name:"Chelsea Safety Boots",img:"boots.jpg",desc:"Steel toe",sizes:["6","7","8","9","10","11"]},
+  {cat:"ppe",name:"Bova Traxx Boots",img:"bova.jpg",desc:"Heavy duty",sizes:["6","7","8","9","10","11"]},
+  {cat:"ppe",name:"Capps Safety Shoes",img:"capps.jpg",desc:"Low cut",sizes:["6","7","8","9","10","11"]},
+  {cat:"ppe",name:"Gum Boots",img:"gum.jpg",desc:"PVC",sizes:["6","7","8","9","10","11"]},
+  {cat:"ppe",name:"Safety Hard Hat",img:"hardhat.jpg",desc:"HDPE",sizes:["Standard"]},
+  {cat:"ppe",name:"Reflective Vest",img:"vest.jpg",desc:"High vis",sizes:["Standard"]},
+  {cat:"ppe",name:"Reflective Mesh Bib",img:"bib.jpg",desc:"Breathable",sizes:["Standard"]},
+  {cat:"ppe",name:"Rain Suit",img:"rain.jpg",desc:"PVC",sizes:["M","L","XL","2XL"]},
+  {cat:"ppe",name:"Freezer Jacket",img:"freezer.jpg",desc:"Thermal",sizes:["M","L","XL","2XL"]},
+  {cat:"ppe",name:"Dust Mask FFP2",img:"mask.jpg",desc:"Box",sizes:["Box"]},
+  {cat:"ppe",name:"Safety Goggles",img:"goggles.jpg",desc:"Anti-fog",sizes:["Standard"]},
+  {cat:"ppe",name:"Ear Muffs",img:"earmuffs.jpg",desc:"Noise",sizes:["Standard"]},
+  {cat:"ppe",name:"Leather Gloves",img:"leathergloves.jpg",desc:"Heavy duty",sizes:["M","L","XL"]},
+  {cat:"ppe",name:"PVC Gloves",img:"pvcgloves.jpg",desc:"Chemical",sizes:["M","L","XL"]},
+
+  {cat:"medical",name:"Nitrile Gloves",img:"gloves.jpg",desc:"Box 100",sizes:["S","M","L","XL"]},
+  {cat:"medical",name:"Latex Gloves",img:"latex.jpg",desc:"Box 100",sizes:["S","M","L","XL"]},
+  {cat:"medical",name:"Surgical Masks",img:"surgicalmask.jpg",desc:"Box 50",sizes:["Standard"]},
+  {cat:"medical",name:"N95 Respirator",img:"n95.jpg",desc:"Medical",sizes:["Standard"]},
+  {cat:"medical",name:"Elbow Crutches",img:"crutches.jpg",desc:"Adjustable",sizes:["Standard"]},
+  {cat:"medical",name:"Sharps Bin",img:"sharps.jpg",desc:"5L/10L/20L",sizes:["5L","10L","20L"]},
+  {cat:"medical",name:"2ml Syringe",img:"2ml.jpg",desc:"Sterile",sizes:["2ml"]},
+  {cat:"medical",name:"5ml Syringe",img:"5ml.jpg",desc:"Sterile",sizes:["5ml"]},
+  {cat:"medical",name:"10ml Syringe",img:"10ml.jpg",desc:"Sterile",sizes:["10ml"]},
+  {cat:"medical",name:"21G Needles",img:"21g.jpg",desc:"Green",sizes:["21G"]},
+  {cat:"medical",name:"23G Needles",img:"23g.jpg",desc:"Blue",sizes:["23G"]},
+  {cat:"medical",name:"Alcohol Prep Pads",img:"alcohol.jpg",desc:"70%",sizes:["Box"]},
+  {cat:"medical",name:"Digital Thermometer",img:"thermometer.jpg",desc:"Rapid",sizes:["Standard"]},
+  {cat:"medical",name:"Pulse Oximeter",img:"pulse.jpg",desc:"Finger",sizes:["Standard"]},
+  {cat:"medical",name:"First Aid Kit Reg 3",img:"kit3.jpg",desc:"Office",sizes:["Standard"]},
+  {cat:"medical",name:"First Aid Kit Reg 7",img:"kit7.jpg",desc:"Industrial",sizes:["Standard"]},
+
+  {cat:"hygiene",name:"Hospital Disinfectant",img:"disinfectant.jpg",desc:"5L/25L",sizes:["5L","25L"]},
+  {cat:"hygiene",name:"Hand Sanitizer",img:"sanitizer.jpg",desc:"5L",sizes:["5L"]},
+  {cat:"hygiene",name:"Industrial Detergent",img:"detergent.jpg",desc:"5L/25L",sizes:["5L","25L"]},
+  {cat:"hygiene",name:"Pine Disinfectant",img:"pine.jpg",desc:"Cleaner",sizes:["5L","25L"]},
+  {cat:"hygiene",name:"Cleaning Trolley",img:"trolley.jpg",desc:"3 shelf",sizes:["Standard"]},
+  {cat:"hygiene",name:"Double Mop Bucket",img:"bucket.jpg",desc:"25L x2",sizes:["Standard"]},
+  {cat:"hygiene",name:"Fan Mop Set",img:"mop.jpg",desc:"Heavy duty",sizes:["Standard"]},
+  {cat:"hygiene",name:"Soft Broom",img:"softbroom.jpg",desc:"Indoor",sizes:["Standard"]},
+  {cat:"hygiene",name:"Hard Broom",img:"hardbroom.jpg",desc:"Outdoor",sizes:["Standard"]},
+  {cat:"hygiene",name:"Microfiber Cloths",img:"cloths.jpg",desc:"Pack",sizes:["Pack"]}
+];
+
+const quote = {};
+const containers = {
+  ppe: document.getElementById("ppe"),
+  medical: document.getElementById("medical"),
+  hygiene: document.getElementById("hygiene")
+};
+const quoteBody = document.getElementById("quoteBody");
+
+PRODUCTS.forEach(p=>{
+  const el=document.createElement("div");
+  el.className="catalog-item";
+  el.innerHTML=`<img src="${p.img}"><h4>${p.name}</h4><p>${p.desc}</p>`;
+  el.addEventListener("click",()=>addToQuote(p));
+  containers[p.cat].appendChild(el);
+});
+
+function addToQuote(p){
+  if(!quote[p.name]){
+    quote[p.name]={...p,qty:1,size:p.sizes[0]};
+    renderQuote();
+  }
+}
+
+function renderQuote(){
+  quoteBody.innerHTML="";
+  Object.values(quote).forEach(item=>{
+    const div=document.createElement("div");
+    div.className="quote-item";
+    const sizeSel=document.createElement("select");
+    item.sizes.forEach(s=>{
+      const o=document.createElement("option");
+      o.value=s;o.textContent=s;
+      if(s===item.size) o.selected=true;
+      sizeSel.appendChild(o);
+    });
+    sizeSel.onchange=e=>item.size=e.target.value;
+
+    const qty=document.createElement("input");
+    qty.type="number";qty.min=1;qty.value=item.qty;
+    qty.oninput=e=>item.qty=parseInt(e.target.value||1);
+
+    div.innerHTML=`<strong>${item.name}</strong>`;
+    const row=document.createElement("div");
+    row.className="quote-row";
+    row.append(sizeSel,qty);
+    div.appendChild(row);
+    quoteBody.appendChild(div);
+  });
+}
+
+let open=true;
+document.getElementById("quoteHeader").onclick=()=>{
+  open=!open;
+  quoteBody.style.display=open?"block":"none";
+};
+</script>
+</body>
+</html>
